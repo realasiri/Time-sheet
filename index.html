@@ -1,218 +1,920 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Explore Sri Lanka | Official Tourism Test Page</title>
-    <style>
-        /* Reset and Base Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: #f9f9f9;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        /* Navigation */
-        nav {
-            background-color: #ffffff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 5%;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #008080; /* Teal accent */
-        }
-
-        .nav-links {
-            list-style: none;
-            display: flex;
-            gap: 20px;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #555;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: #008080;
-        }
-
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
-                        url('https://images.unsplash.com/photo-1546708973-b339540b5162?auto=format&fit=crop&w=1920&q=80') no-repeat center center/cover;
-            height: 60vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: white;
-            padding: 0 20px;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin-bottom: 20px;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
-        }
-
-        .btn {
-            display: inline-block;
-            background-color: #ff9f43;
-            color: white;
-            padding: 10px 25px;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-
-        .btn:hover {
-            background-color: #e08528;
-        }
-
-        /* Main Content Container */
-        .container {
-            max-width: 1100px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #222;
-        }
-
-        /* Destinations Grid */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            transition: transform 0.3s;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        .card-img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-
-        .card-content {
-            padding: 20px;
-        }
-
-        .card-content h3 {
-            margin-bottom: 10px;
-            color: #008080;
-        }
-
-        /* Footer */
-        footer {
-            background-color: #222;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            margin-top: 40px;
-            font-size: 0.9rem;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Task Time Sheet</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.6.0/jspdf.plugin.autotable.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f7; color: #1d1d1f; min-height: 100vh; }
+  .page { max-width: 820px; margin: 0 auto; padding: 24px 16px 60px; }
+  h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #666; margin-bottom: 24px; }
+  .card { background: #fff; border-radius: 12px; border: 1px solid #e0e0e0; padding: 20px; margin-bottom: 16px; }
+  label { font-size: 12px; font-weight: 600; color: #555; display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.4px; }
+  input, select, textarea { font-family: inherit; font-size: 14px; color: #1d1d1f; background: #fff; border: 1px solid #d0d0d0; border-radius: 8px; width: 100%; padding: 9px 11px; transition: border-color 0.15s; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: #5a4fcf; box-shadow: 0 0 0 3px rgba(90,79,207,0.12); }
+  textarea { resize: vertical; min-height: 64px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .mt { margin-top: 12px; }
+  .btn { display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px; border: 1px solid #d0d0d0; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 500; font-family: inherit; background: #fff; color: #1d1d1f; transition: background 0.12s; }
+  .btn:hover { background: #f0f0f2; }
+  .btn:active { transform: scale(0.98); }
+  .btn-start { background: #e6f7ef; color: #1a7a4a; border-color: #7ecba1; }
+  .btn-start:hover { background: #cdf0dc; }
+  .btn-stop { background: #fdecea; color: #c0392b; border-color: #f5a49d; }
+  .btn-stop:hover { background: #fbd5d2; }
+  .btn-primary { background: #3c3489; color: #fff; border-color: #3c3489; }
+  .btn-primary:hover { background: #2e2768; }
+  .btn-danger { background: #fdecea; color: #c0392b; border-color: #f5a49d; font-size: 13px; padding: 6px 12px; }
+  .timer-wrap { text-align: right; }
+  .timer-display { font-size: 40px; font-weight: 600; letter-spacing: 2px; font-variant-numeric: tabular-nums; color: #1d1d1f; line-height: 1; }
+  .timer-running { color: #1a7a4a; }
+  .timer-status { font-size: 12px; color: #888; margin-top: 4px; margin-bottom: 12px; }
+  .running-info { display: none; margin-top: 10px; font-size: 13px; color: #1a7a4a; align-items: center; gap: 8px; }
+  .running-info.show { display: flex; }
+  .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: #1a7a4a; animation: pulse 1.4s infinite; flex-shrink: 0; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 16px; }
+  .stat { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 12px 14px; }
+  .stat-label { font-size: 11px; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; }
+  .stat-val { font-size: 20px; font-weight: 600; color: #1d1d1f; }
+  .export-card { background: #eeedfe; border: 1px solid #c8c5f5; border-radius: 12px; padding: 16px 20px; margin-bottom: 16px; }
+  .export-card h3 { font-size: 14px; font-weight: 600; color: #3c3489; margin-bottom: 12px; }
+  .export-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+  .export-row > div { flex: 1; min-width: 120px; }
+  .export-row > div.flex0 { flex: 0; }
+  .custom-dates { display: none; }
+  .custom-dates.show { display: contents; }
+  .export-msg { font-size: 12px; margin-top: 10px; padding: 8px 12px; border-radius: 6px; display: none; }
+  .export-msg.success { background: #e6f7ef; color: #1a7a4a; display: block; }
+  .export-msg.error { background: #fdecea; color: #c0392b; display: block; }
+  .log-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .log-title { font-size: 15px; font-weight: 600; }
+  .log-empty { text-align: center; color: #aaa; padding: 36px 0; font-size: 14px; }
+  .day-group { margin-bottom: 4px; }
+  .day-label { font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; display: flex; justify-content: space-between; padding: 10px 0 4px; border-bottom: 1px solid #f0f0f0; margin-bottom: 2px; }
+  .log-entry { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: start; padding: 10px 0; border-bottom: 1px solid #f5f5f7; }
+  .log-entry:last-child { border-bottom: none; }
+  .log-task { font-size: 14px; font-weight: 600; }
+  .log-desc { font-size: 12px; color: #777; margin-top: 2px; }
+  .log-time { font-size: 12px; color: #999; margin-top: 3px; }
+  .log-right { text-align: right; }
+  .log-dur { font-size: 14px; font-weight: 600; color: #3c3489; }
+  .log-actions { display: flex; gap: 4px; margin-top: 6px; justify-content: flex-end; }
+  .icon-btn { background: none; border: none; cursor: pointer; color: #aaa; padding: 4px; border-radius: 6px; font-size: 15px; line-height: 1; transition: color 0.12s, background 0.12s; }
+  .icon-btn:hover { color: #1d1d1f; background: #f0f0f2; }
+  .icon-btn.del:hover { color: #c0392b; background: #fdecea; }
+  .repeat-btn { color: #1a7a4a !important; font-size: 12px !important; border: 1px solid #7ecba1 !important; border-radius: 6px !important; padding: 3px 8px !important; background: #f0fbf5 !important; }
+  .repeat-btn:hover { background: #cdf0dc !important; }
+  .edit-box { background: #f8f8fa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px; margin-top: 8px; }
+  .edit-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .add-task-row { display: flex; gap: 8px; margin-top: 8px; }
+  .add-task-row input { flex: 1; }
+  .filter-select { font-size: 13px; padding: 6px 10px; width: auto; min-width: 120px; }
+  .top-bar { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+  .top-bar-left { flex: 1; }
+  /* ── Lock screen ── */
+  #lockScreen { display:none; position:fixed; inset:0; background:#1e1b4b; z-index:9999; align-items:center; justify-content:center; flex-direction:column; }
+  #lockScreen.show { display:flex; }
+  .lock-box { background:#fff; border-radius:16px; padding:40px 36px; width:100%; max-width:360px; box-shadow:0 20px 60px rgba(0,0,0,0.4); text-align:center; }
+  .lock-icon { font-size:44px; margin-bottom:12px; }
+  .lock-title { font-size:20px; font-weight:700; color:#1d1d1f; margin-bottom:4px; }
+  .lock-sub { font-size:13px; color:#888; margin-bottom:24px; }
+  .lock-input { font-size:16px; padding:12px 14px; border:1.5px solid #d0d0d0; border-radius:10px; width:100%; text-align:center; letter-spacing:3px; margin-bottom:10px; }
+  .lock-input:focus { border-color:#3c3489; box-shadow:0 0 0 3px rgba(60,52,137,0.15); outline:none; }
+  .lock-btn { width:100%; padding:12px; background:#3c3489; color:#fff; border:none; border-radius:10px; font-size:15px; font-weight:600; cursor:pointer; font-family:inherit; margin-top:4px; }
+  .lock-btn:hover { background:#2e2768; }
+  .lock-err { font-size:13px; color:#c0392b; margin-top:10px; min-height:18px; }
+  .lock-setup { font-size:12px; color:#aaa; margin-top:16px; }
+  .lock-setup a { color:#3c3489; cursor:pointer; text-decoration:underline; }
+  .lock-badge { position:fixed; top:14px; right:16px; z-index:100; display:flex; align-items:center; gap:8px; }
+  .lock-badge button { background:none; border:1px solid #d0d0d0; border-radius:8px; padding:5px 12px; font-size:12px; cursor:pointer; color:#555; font-family:inherit; }
+  .lock-badge button:hover { background:#f0f0f2; }
+</style>
 </head>
 <body>
 
-    <!-- Navigation Bar -->
-    <nav>
-        <div class="logo">🇱🇰 Sri Lanka Tourism</div>
-        <ul class="nav-links">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Destinations</a></li>
-            <li><a href="#">Culture</a></li>
-            <li><a href="#">Contact</a></li>
-        </ul>
-    </nav>
+<!-- Lock screen -->
+<div id="lockScreen" class="show">
+  <div class="lock-box">
+    <div class="lock-icon">&#128274;</div>
+    <div class="lock-title">Task Time Sheet</div>
+    <div class="lock-sub" id="lockSub">Enter your password to continue</div>
+    <input class="lock-input" type="password" id="lockInput" placeholder="Password" onkeydown="if(event.key==='Enter')submitLock()">
+    <button class="lock-btn" onclick="submitLock()">Unlock</button>
+    <div class="lock-err" id="lockErr"></div>
+    <div class="lock-setup" id="lockSetupHint"></div>
+  </div>
+</div>
 
-    <!-- Hero Showcase Section -->
-    <header class="hero">
-        <h1>Wonder of Asia</h1>
-        <p>Experience pristine beaches, lush tea plantations, rich cultural heritage, and wildlife adventures.</p>
-        <a href="#explore" class="btn">Explore Now</a>
-    </header>
+<!-- Lock badge (top-right when unlocked) -->
+<div class="lock-badge" id="lockBadge" style="display:none">
+  <button onclick="lockApp()">&#128274; Lock</button>
+  <button onclick="changePassword()">&#9881; Change password</button>
+</div>
+<div class="page">
+  <h1>&#128197; Task Time Sheet</h1>
+  <p class="subtitle">Track your work tasks in real time &mdash; start, stop, and export to PDF.</p>
 
-    <!-- Main Content Grid -->
-    <main class="container" id="explore">
-        <h2 class="section-title">Popular Highlights</h2>
-        
-        <div class="grid">
-            <!-- Card 1 -->
-            <div class="card">
-                <img src="https://images.unsplash.com/photo-1586861635167-e5223aadc9fe?auto=format&fit=crop&w=600&q=80" alt="Sigiriya" class="card-img">
-                <div class="card-content">
-                    <h3>Ancient Heritage</h3>
-                    <p>Climb the historic Sigiriya Rock Fortress, explore the ancient ruins of Anuradhapura, and witness majestic temples.</p>
-                </div>
+  <!-- Timer Card -->
+  <div class="card">
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <label>Select task</label>
+        <div style="position:relative">
+          <div id="taskPickerBtn" onclick="togglePicker()" style="display:flex;align-items:center;justify-content:space-between;padding:9px 11px;border:1px solid #d0d0d0;border-radius:8px;cursor:pointer;background:#fff;font-size:14px;user-select:none;">
+            <span id="taskPickerLabel" style="color:#999">&#8212; choose a task &#8212;</span>
+            <span style="font-size:11px;color:#aaa">&#9660;</span>
+          </div>
+          <div id="taskPickerDropdown" style="display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid #d0d0d0;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.10);z-index:100;max-height:260px;overflow-y:auto;">
+            <div id="taskPickerList"></div>
+            <div style="border-top:1px solid #f0f0f0;padding:6px 8px">
+              <div style="display:flex;gap:6px">
+                <input type="text" id="newTaskName" placeholder="New task name&hellip;" style="flex:1;padding:6px 8px;font-size:13px" onkeydown="if(event.key==='Enter')addTask()">
+                <button class="btn btn-start" onclick="addTask()" style="padding:6px 12px;font-size:13px;white-space:nowrap">&#10003; Add</button>
+              </div>
             </div>
-
-            <!-- Card 2 -->
-            <div class="card">
-                <img src="https://images.unsplash.com/photo-1542856391-010fb87dcfed?auto=format&fit=crop&w=600&q=80" alt="Ella Tea Train" class="card-img">
-                <div class="card-content">
-                    <h3>Scenic Hill Country</h3>
-                    <p>Take the world-famous train ride to Ella, wander through rolling green tea estates, and enjoy cooler mountain climates.</p>
-                </div>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="card">
-                <img src="https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=600&q=80" alt="Sri Lanka Beach" class="card-img">
-                <div class="card-content">
-                    <h3>Pristine Beaches</h3>
-                    <p>Relax on golden sands in Mirissa, surf the famous breaks at Arugam Bay, or catch a gorgeous sunset in Unawatuna.</p>
-                </div>
-            </div>
+          </div>
         </div>
-    </main>
+        <input type="hidden" id="taskSelect" value="">
+        <div class="mt">
+          <label>Customer</label>
+          <div style="position:relative">
+            <div id="custPickerBtn" onclick="toggleCustPicker()" style="display:flex;align-items:center;justify-content:space-between;padding:9px 11px;border:1px solid #d0d0d0;border-radius:8px;cursor:pointer;background:#fff;font-size:14px;user-select:none;">
+              <span id="custPickerLabel" style="color:#999">&#8212; choose a customer &#8212;</span>
+              <span style="font-size:11px;color:#aaa">&#9660;</span>
+            </div>
+            <div id="custPickerDropdown" style="display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid #d0d0d0;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.10);z-index:100;max-height:220px;overflow-y:auto;">
+              <div id="custPickerList"></div>
+              <div style="border-top:1px solid #f0f0f0;padding:6px 8px">
+                <div style="display:flex;gap:6px">
+                  <input type="text" id="newCustName" placeholder="New customer name&hellip;" style="flex:1;padding:6px 8px;font-size:13px" onkeydown="if(event.key==='Enter')addCustomer()">
+                  <button class="btn btn-start" onclick="addCustomer()" style="padding:6px 12px;font-size:13px;white-space:nowrap">&#10003; Add</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" id="custSelect" value="">
+        </div>
+        <div class="mt">
+          <label for="taskDesc">Description <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#aaa">(optional)</span></label>
+          <textarea id="taskDesc" placeholder="What specifically are you working on?"></textarea>
+        </div>
+      </div>
+      <div class="timer-wrap">
+        <div id="timerDisplay" class="timer-display">00:00:00</div>
+        <div id="timerStatus" class="timer-status">idle</div>
+        <button class="btn btn-start" id="startBtn" onclick="startTask()">&#9654; Start</button>
+        <button class="btn btn-stop" id="stopBtn" onclick="stopTask()" style="display:none">&#9646;&#9646; Stop &amp; save</button>
+      </div>
+    </div>
+    <div class="running-info" id="runningInfo">
+      <div class="pulse-dot"></div>
+      <span id="runningLabel"></span>
+    </div>
+  </div>
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2026 Sri Lanka Tourism Test Website. All rights reserved.</p>
-    </footer>
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat"><div class="stat-label">Tasks today</div><div class="stat-val" id="statTasks">0</div></div>
+    <div class="stat"><div class="stat-label">Total time today</div><div class="stat-val" id="statTotal">0h 0m</div></div>
+    <div class="stat"><div class="stat-label">Last saved</div><div class="stat-val" id="statLast" style="font-size:15px;padding-top:3px">&#8212;</div></div>
+  </div>
 
+  <!-- Export -->
+  <div class="export-card">
+    <h3>&#128196; Export to PDF</h3>
+    <div class="export-row">
+      <div>
+        <label for="exportRange">Date range</label>
+        <select id="exportRange" onchange="toggleCustomRange()">
+          <option value="today">Today</option>
+          <option value="week">This week</option>
+          <option value="month">This month</option>
+          <option value="custom">Custom range&hellip;</option>
+          <option value="all">All entries</option>
+        </select>
+      </div>
+      <div id="wrapFrom" class="custom-dates">
+        <label for="dateFrom">From</label>
+        <input type="date" id="dateFrom">
+      </div>
+      <div id="wrapTo" class="custom-dates">
+        <label for="dateTo">To</label>
+        <input type="date" id="dateTo">
+      </div>
+      <div>
+        <label for="exportCustomer">Customer</label>
+        <select id="exportCustomer" style="min-width:140px">
+          <option value="">All customers</option>
+        </select>
+      </div>
+      <div class="flex0">
+        <label>&nbsp;</label>
+        <button class="btn btn-primary" onclick="exportPDF()">&#8681; Download PDF</button>
+      </div>
+    </div>
+    <div id="exportMsg" class="export-msg"></div>
+  </div>
+
+  <!-- Log -->
+  <div class="log-header">
+    <span class="log-title">Task log</span>
+    <div style="display:flex;gap:8px">
+      <select class="filter-select" id="filterCustomer" onchange="renderLog()">
+        <option value="">All customers</option>
+      </select>
+      <select class="filter-select" id="filterDate" onchange="renderLog()">
+        <option value="recent" selected>Today &amp; Yesterday</option>
+        <option value="today">Today only</option>
+        <option value="all">All entries</option>
+      </select>
+    </div>
+  </div>
+  <div id="logContainer"></div>
+</div>
+
+<script>
+/* ── Storage keys ── */
+var LS_LOG   = 'tts_log';
+var LS_TASKS = 'tts_tasks';
+var LS_CUSTS = 'tts_customers';
+
+/* ── Default built-in tasks ── */
+var DEFAULT_TASKS = [
+  'DB Backup Monitoring','Replication Health Check','Incident Response',
+  'EFM Log Analysis','RCA Documentation','Change Management',
+  'Performance Tuning','Meeting / Review'
+];
+
+var DEFAULT_CUSTOMERS = [];
+
+var log = [];
+var running = null;
+var timerInterval = null;
+var editId = null;
+
+/* ── Helpers ── */
+function pad(n){ return String(n).padStart(2,'0'); }
+function fmtTime(d){ return pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds()); }
+function fmtTimeShort(d){ return pad(d.getHours())+':'+pad(d.getMinutes()); }
+function fmtDateDisp(d){ return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}); }
+function todayStr(){ return new Date().toDateString(); }
+function toDateKey(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+
+function durStr(ms){
+  if(ms<=0) return '0m';
+  var s=Math.floor(ms/1000)%60, m=Math.floor(ms/60000)%60, h=Math.floor(ms/3600000);
+  return h>0 ? h+'h '+m+'m' : m+'m '+s+'s';
+}
+function durHHMMSS(ms){
+  var s=Math.floor(ms/1000)%60, m=Math.floor(ms/60000)%60, h=Math.floor(ms/3600000);
+  return pad(h)+':'+pad(m)+':'+pad(s);
+}
+
+/* ── localStorage save / load ── */
+function saveTasks(){
+  localStorage.setItem(LS_TASKS, JSON.stringify(taskList));
+}
+
+function saveLog(){
+  var raw=log.map(function(e){
+    return {
+      id:e.id, task:e.task, desc:e.desc, customer:e.customer||'',
+      start:e.start.getTime(), end:e.end.getTime(), ms:e.ms,
+      dateKey:e.dateKey, dateStr:e.dateStr
+    };
+  });
+  localStorage.setItem(LS_LOG, JSON.stringify(raw));
+}
+
+function loadTasks(){
+  var stored=localStorage.getItem(LS_TASKS);
+  taskList = stored ? JSON.parse(stored) : DEFAULT_TASKS.slice();
+  if(!stored) saveTasks();
+}
+
+function loadLog(){
+  var stored=localStorage.getItem(LS_LOG);
+  if(!stored){ log=[]; return; }
+  try {
+    log=JSON.parse(stored).map(function(e){
+      return {
+        id:e.id, task:e.task, desc:e.desc, customer:e.customer||'',
+        start:new Date(e.start), end:new Date(e.end), ms:e.ms,
+        dateKey:e.dateKey, dateStr:e.dateStr
+      };
+    });
+  } catch(err){ log=[]; }
+}
+
+function saveCustomers(){
+  localStorage.setItem(LS_CUSTS, JSON.stringify(custList));
+}
+
+function loadCustomers(){
+  var stored=localStorage.getItem(LS_CUSTS);
+  custList = stored ? JSON.parse(stored) : DEFAULT_CUSTOMERS.slice();
+  if(!stored) saveCustomers();
+  refreshCustomerDropdowns();
+}
+
+function refreshCustomerDropdowns(){
+  /* export filter */
+  var ex=document.getElementById('exportCustomer');
+  var exVal=ex.value;
+  while(ex.options.length>1) ex.remove(1);
+  custList.forEach(function(c){ var o=document.createElement('option'); o.value=c; o.textContent=c; ex.appendChild(o); });
+  if(exVal) ex.value=exVal;
+  /* log filter */
+  var lf=document.getElementById('filterCustomer');
+  var lfVal=lf.value;
+  while(lf.options.length>1) lf.remove(1);
+  custList.forEach(function(c){ var o=document.createElement('option'); o.value=c; o.textContent=c; lf.appendChild(o); });
+  if(lfVal) lf.value=lfVal;
+}
+
+/* ── Custom task picker ── */
+var taskList = [];
+var custList = [];
+var pickerOpen = false;
+var custPickerOpen = false;
+
+function renderPicker(){
+  var list = document.getElementById('taskPickerList');
+  if(taskList.length===0){
+    list.innerHTML='<div style="padding:10px 12px;font-size:13px;color:#aaa">No tasks yet — add one below</div>';
+    return;
+  }
+  list.innerHTML = taskList.map(function(t){
+    var selected = document.getElementById('taskSelect').value === t;
+    return '<div onclick="selectTask(\''+escQ(t)+'\')" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;font-size:14px;background:'+(selected?'#eeedfe':'#fff')+';font-weight:'+(selected?'600':'400')+'" onmouseover="this.style.background=\'#f5f5f7\'" onmouseout="this.style.background=\''+(selected?'#eeedfe':'#fff')+'\'">'
+      +'<span>'+escH(t)+'</span>'
+      +'<button onclick="event.stopPropagation();deleteTask(\''+escQ(t)+'\')" title="Remove task" style="background:none;border:none;cursor:pointer;color:#ccc;font-size:15px;line-height:1;padding:2px 4px;border-radius:4px" onmouseover="this.style.color=\'#c0392b\'" onmouseout="this.style.color=\'#ccc\'">&#10005;</button>'
+      +'</div>';
+  }).join('');
+}
+
+function escH(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escQ(s){ return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+
+function togglePicker(){
+  pickerOpen = !pickerOpen;
+  document.getElementById('taskPickerDropdown').style.display = pickerOpen ? 'block' : 'none';
+  if(pickerOpen){ renderPicker(); setTimeout(function(){ document.getElementById('newTaskName').focus(); },50); }
+}
+
+function closePicker(){
+  pickerOpen = false;
+  document.getElementById('taskPickerDropdown').style.display = 'none';
+}
+
+function selectTask(name){
+  document.getElementById('taskSelect').value = name;
+  document.getElementById('taskPickerLabel').textContent = name;
+  document.getElementById('taskPickerLabel').style.color = '#1d1d1f';
+  document.getElementById('taskPickerBtn').style.borderColor = '#5a4fcf';
+  closePicker();
+}
+
+function addTask(){
+  var name=document.getElementById('newTaskName').value.trim();
+  if(!name) return;
+  if(taskList.indexOf(name)===-1){
+    taskList.push(name);
+    saveTasks();
+  }
+  document.getElementById('newTaskName').value='';
+  selectTask(name);
+}
+
+function deleteTask(name){
+  if(!confirm('Remove "'+name+'" from the task list?')) return;
+  taskList = taskList.filter(function(t){ return t!==name; });
+  saveTasks();
+  /* if currently selected, clear */
+  if(document.getElementById('taskSelect').value===name){
+    document.getElementById('taskSelect').value='';
+    document.getElementById('taskPickerLabel').textContent='— choose a task —';
+    document.getElementById('taskPickerLabel').style.color='#999';
+    document.getElementById('taskPickerBtn').style.borderColor='#d0d0d0';
+  }
+  renderPicker();
+}
+
+/* close picker when clicking outside */
+document.addEventListener('click', function(e){
+  if(pickerOpen && !document.getElementById('taskPickerBtn').contains(e.target) && !document.getElementById('taskPickerDropdown').contains(e.target)){
+    closePicker();
+  }
+});
+
+/* ── Custom customer picker ── */
+function renderCustPicker(){
+  var list=document.getElementById('custPickerList');
+  if(custList.length===0){
+    list.innerHTML='<div style="padding:10px 12px;font-size:13px;color:#aaa">No customers yet — add one below</div>';
+    return;
+  }
+  list.innerHTML=custList.map(function(c){
+    var selected=document.getElementById('custSelect').value===c;
+    return '<div onclick="selectCustomer(\''+escQ(c)+'\')" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;font-size:14px;background:'+(selected?'#fff7e6':'#fff')+';font-weight:'+(selected?'600':'400')+'" onmouseover="this.style.background=\'#f5f5f7\'" onmouseout="this.style.background=\''+(selected?'#fff7e6':'#fff')+'\'">'
+      +'<span>'+escH(c)+'</span>'
+      +'<button onclick="event.stopPropagation();deleteCustomer(\''+escQ(c)+'\')" title="Remove customer" style="background:none;border:none;cursor:pointer;color:#ccc;font-size:15px;line-height:1;padding:2px 4px;border-radius:4px" onmouseover="this.style.color=\'#c0392b\'" onmouseout="this.style.color=\'#ccc\'">&#10005;</button>'
+      +'</div>';
+  }).join('');
+}
+
+function toggleCustPicker(){
+  custPickerOpen=!custPickerOpen;
+  document.getElementById('custPickerDropdown').style.display=custPickerOpen?'block':'none';
+  if(custPickerOpen){ renderCustPicker(); setTimeout(function(){ document.getElementById('newCustName').focus(); },50); }
+}
+
+function closeCustPicker(){
+  custPickerOpen=false;
+  document.getElementById('custPickerDropdown').style.display='none';
+}
+
+function selectCustomer(name){
+  document.getElementById('custSelect').value=name;
+  document.getElementById('custPickerLabel').textContent=name;
+  document.getElementById('custPickerLabel').style.color='#1d1d1f';
+  document.getElementById('custPickerBtn').style.borderColor='#f0a500';
+  closeCustPicker();
+}
+
+function addCustomer(){
+  var name=document.getElementById('newCustName').value.trim();
+  if(!name) return;
+  if(custList.indexOf(name)===-1){ custList.push(name); saveCustomers(); refreshCustomerDropdowns(); }
+  document.getElementById('newCustName').value='';
+  selectCustomer(name);
+}
+
+function deleteCustomer(name){
+  if(!confirm('Remove "'+name+'" from the customer list?')) return;
+  custList=custList.filter(function(c){ return c!==name; });
+  saveCustomers(); refreshCustomerDropdowns();
+  if(document.getElementById('custSelect').value===name){
+    document.getElementById('custSelect').value='';
+    document.getElementById('custPickerLabel').textContent='— choose a customer —';
+    document.getElementById('custPickerLabel').style.color='#999';
+    document.getElementById('custPickerBtn').style.borderColor='#d0d0d0';
+  }
+  renderCustPicker();
+}
+
+document.addEventListener('click', function(e){
+  if(custPickerOpen && !document.getElementById('custPickerBtn').contains(e.target) && !document.getElementById('custPickerDropdown').contains(e.target)){
+    closeCustPicker();
+  }
+});
+
+/* ── Timer ── */
+function startTask(){
+  var task=document.getElementById('taskSelect').value;
+  if(!task){ alert('Please select or add a task first.'); return; }
+  if(running) stopTask();
+  var desc=document.getElementById('taskDesc').value.trim();
+  var cust=document.getElementById('custSelect').value;
+  running={id:Date.now(), task:task, desc:desc, customer:cust, start:new Date()};
+  document.getElementById('startBtn').style.display='none';
+  document.getElementById('stopBtn').style.display='inline-flex';
+  document.getElementById('runningInfo').classList.add('show');
+  document.getElementById('runningLabel').textContent=task+' — started at '+fmtTime(running.start);
+  document.getElementById('timerDisplay').classList.add('timer-running');
+  document.getElementById('timerStatus').textContent='running';
+  timerInterval=setInterval(function(){
+    var ms=Date.now()-running.start.getTime();
+    document.getElementById('timerDisplay').textContent=durHHMMSS(ms);
+  },1000);
+}
+
+function stopTask(){
+  if(!running) return;
+  clearInterval(timerInterval);
+  var end=new Date();
+  var ms=end-running.start;
+  log.unshift({
+    id:running.id, task:running.task, desc:running.desc, customer:running.customer||'',
+    start:running.start, end:end, ms:ms,
+    dateKey:toDateKey(running.start), dateStr:running.start.toDateString()
+  });
+  running=null;
+  document.getElementById('startBtn').style.display='inline-flex';
+  document.getElementById('stopBtn').style.display='none';
+  document.getElementById('runningInfo').classList.remove('show');
+  document.getElementById('timerDisplay').textContent='00:00:00';
+  document.getElementById('timerDisplay').classList.remove('timer-running');
+  document.getElementById('timerStatus').textContent='idle';
+  document.getElementById('taskDesc').value='';
+  document.getElementById('taskSelect').value='';
+  document.getElementById('taskPickerLabel').textContent='— choose a task —';
+  document.getElementById('taskPickerLabel').style.color='#999';
+  document.getElementById('taskPickerBtn').style.borderColor='#d0d0d0';
+  document.getElementById('custSelect').value='';
+  document.getElementById('custPickerLabel').textContent='— choose a customer —';
+  document.getElementById('custPickerLabel').style.color='#999';
+  document.getElementById('custPickerBtn').style.borderColor='#d0d0d0';
+  saveLog();
+  updateStats();
+  renderLog();
+}
+
+function updateStats(){
+  var today=log.filter(function(e){ return e.dateStr===todayStr(); });
+  document.getElementById('statTasks').textContent=today.length;
+  var totalMs=today.reduce(function(a,e){ return a+e.ms; },0);
+  var h=Math.floor(totalMs/3600000), m=Math.floor(totalMs/60000)%60;
+  document.getElementById('statTotal').textContent=h+'h '+m+'m';
+  document.getElementById('statLast').textContent=today.length>0?fmtTime(today[0].end):'—';
+}
+
+function getTaskOptions(selected){
+  return taskList.map(function(t){
+    return '<option'+(t===selected?' selected':'')+'>'+escH(t)+'</option>';
+  }).join('');
+}
+
+/* ── Log render ── */
+function renderLog(){
+  var dateFilter=document.getElementById('filterDate').value;
+  var custFilter=document.getElementById('filterCustomer').value;
+
+  /* find the last date (before today) that actually has log entries */
+  var todayKey=toDateKey(new Date());
+  var prevKey=null;
+  if(dateFilter==='recent'){
+    var pastKeys=log
+      .map(function(e){ return e.dateKey; })
+      .filter(function(k){ return k<todayKey; });
+    if(pastKeys.length>0){
+      pastKeys.sort();
+      prevKey=pastKeys[pastKeys.length-1];
+    }
+  }
+
+  var entries=log.filter(function(e){
+    if(dateFilter==='today' && e.dateStr!==todayStr()) return false;
+    if(dateFilter==='recent' && e.dateKey!==todayKey && e.dateKey!==prevKey) return false;
+    if(custFilter && e.customer!==custFilter) return false;
+    return true;
+  });
+  var cont=document.getElementById('logContainer');
+  if(entries.length===0){
+    cont.innerHTML='<div class="log-empty">&#128336; No tasks logged yet.<br><span style="font-size:12px">Select a task above and hit Start.</span></div>';
+    return;
+  }
+  var grouped={};
+  entries.forEach(function(e){ if(!grouped[e.dateStr]) grouped[e.dateStr]=[]; grouped[e.dateStr].push(e); });
+  var html='';
+  Object.keys(grouped).forEach(function(date){
+    var dayMs=grouped[date].reduce(function(a,e){ return a+e.ms; },0);
+    html+='<div class="day-group"><div class="day-label"><span>'+date+'</span><span>'+durStr(dayMs)+' total</span></div>';
+    grouped[date].forEach(function(e){
+      var custBadge=e.customer?'<span style="display:inline-block;margin-left:6px;padding:1px 7px;background:#fff7e0;border:1px solid #f0c040;border-radius:10px;font-size:11px;font-weight:600;color:#7a5c00;">'+escH(e.customer)+'</span>':'';
+      if(editId===e.id){
+        var custOpts='<option value="">— no customer —</option>'+custList.map(function(c){ return '<option'+(c===e.customer?' selected':'')+'>'+escH(c)+'</option>'; }).join('');
+        html+='<div class="log-entry" id="entry_'+e.id+'"><div style="grid-column:1/-1"><div class="edit-box">'+
+          '<div class="row2 mt"><div><label>Task</label><select id="et_'+e.id+'">'+getTaskOptions(e.task)+'</select></div>'+
+          '<div><label>Customer</label><select id="ec_'+e.id+'">'+custOpts+'</select></div></div>'+
+          '<div class="mt"><label>Date</label><input type="date" id="edate_'+e.id+'" value="'+e.dateKey+'"></div>'+
+          '<div class="mt"><label>Description</label><textarea id="ed_'+e.id+'">'+(e.desc||'')+'</textarea></div>'+
+          '<div class="row2 mt"><div><label>Start time</label><input type="time" id="es_'+e.id+'" value="'+fmtTimeShort(e.start)+'"></div>'+
+          '<div><label>End time</label><input type="time" id="ee_'+e.id+'" value="'+fmtTimeShort(e.end)+'"></div></div>'+
+          '<div class="edit-actions">'+
+          '<button class="btn btn-start" style="font-size:13px;padding:6px 14px" onclick="saveEdit('+e.id+')">&#10003; Save</button>'+
+          '<button class="btn" style="font-size:13px;padding:6px 14px" onclick="cancelEdit()">&#10005; Cancel</button>'+
+          '</div></div></div></div>';
+      } else {
+        html+='<div class="log-entry" id="entry_'+e.id+'">'+
+          '<div><div class="log-task">'+escH(e.task)+custBadge+'</div>'+
+          (e.desc?'<div class="log-desc">'+escH(e.desc)+'</div>':'')+
+          '<div class="log-time">&#128336; '+fmtTime(e.start)+' &rarr; '+fmtTime(e.end)+'</div></div>'+
+          '<div class="log-right"><div class="log-dur">'+durStr(e.ms)+'</div>'+
+          '<div class="log-actions">'+
+          '<button class="icon-btn repeat-btn" onclick="repeatTask('+e.id+')" title="Repeat this task">&#9654; Repeat</button>'+
+          '<button class="icon-btn" onclick="editEntry('+e.id+')" title="Edit">&#9998;</button>'+
+          '<button class="icon-btn del" onclick="deleteEntry('+e.id+')" title="Delete">&#128465;</button>'+
+          '</div></div></div>';
+      }
+    });
+    html+='</div>';
+  });
+  cont.innerHTML=html;
+}
+
+function editEntry(id){ editId=id; renderLog(); }
+function cancelEdit(){ editId=null; renderLog(); }
+function saveEdit(id){
+  var e=log.find(function(x){ return x.id===id; });
+  if(!e) return;
+  e.task=document.getElementById('et_'+id).value||e.task;
+  e.customer=document.getElementById('ec_'+id)?document.getElementById('ec_'+id).value:e.customer||'';
+  e.desc=document.getElementById('ed_'+id).value||'';
+  var sv=document.getElementById('es_'+id).value;
+  var ev=document.getElementById('ee_'+id).value;
+  var dv=document.getElementById('edate_'+id).value;
+  if(sv&&ev&&dv){
+    var sd=new Date(dv+'T'+sv+':00');
+    var ed=new Date(dv+'T'+ev+':00');
+    e.start=sd; e.end=ed; e.ms=Math.max(0,ed-sd);
+    e.dateKey=dv; e.dateStr=sd.toDateString();
+  }
+  editId=null; saveLog(); updateStats(); renderLog();
+}
+function deleteEntry(id){
+  if(!confirm('Delete this entry?')) return;
+  log=log.filter(function(e){ return e.id!==id; });
+  saveLog(); updateStats(); renderLog();
+}
+
+function repeatTask(id){
+  var e=log.find(function(x){ return x.id===id; });
+  if(!e) return;
+  if(running) stopTask();
+  /* pre-fill the picker */
+  selectTask(e.task);
+  if(e.customer) selectCustomer(e.customer);
+  document.getElementById('taskDesc').value = e.desc||'';
+  /* scroll to top */
+  document.getElementById('taskPickerBtn').scrollIntoView({behavior:'smooth', block:'center'});
+  /* highlight the start button briefly */
+  var btn=document.getElementById('startBtn');
+  btn.style.boxShadow='0 0 0 3px #7ecba1';
+  setTimeout(function(){ btn.style.boxShadow=''; }, 1800);
+}
+
+function toggleCustomRange(){
+  var v=document.getElementById('exportRange').value;
+  var els=document.querySelectorAll('.custom-dates');
+  els.forEach(function(el){ el.classList.toggle('show', v==='custom'); });
+  if(v==='custom'){
+    var today=toDateKey(new Date());
+    document.getElementById('dateFrom').value=today;
+    document.getElementById('dateTo').value=today;
+  }
+}
+
+function getExportEntries(){
+  var range=document.getElementById('exportRange').value;
+  var custFilter=document.getElementById('exportCustomer').value;
+  var now=new Date();
+  var entries;
+  if(range==='today'){
+    var k=toDateKey(now);
+    entries=log.filter(function(e){ return e.dateKey===k; });
+  } else if(range==='week'){
+    var day=now.getDay()||7;
+    var mon=new Date(now); mon.setDate(now.getDate()-day+1); mon.setHours(0,0,0,0);
+    var sun=new Date(mon); sun.setDate(mon.getDate()+6); sun.setHours(23,59,59,999);
+    entries=log.filter(function(e){ return e.start>=mon&&e.start<=sun; });
+  } else if(range==='month'){
+    var m=now.getMonth(), y=now.getFullYear();
+    entries=log.filter(function(e){ return e.start.getMonth()===m&&e.start.getFullYear()===y; });
+  } else if(range==='custom'){
+    var from=document.getElementById('dateFrom').value;
+    var to=document.getElementById('dateTo').value;
+    if(!from||!to){ alert('Please select both From and To dates.'); return null; }
+    var f=new Date(from); f.setHours(0,0,0,0);
+    var t=new Date(to); t.setHours(23,59,59,999);
+    if(f>t){ alert('From date must be before To date.'); return null; }
+    entries=log.filter(function(e){ return e.start>=f&&e.start<=t; });
+  } else {
+    entries=log.slice();
+  }
+  if(custFilter) entries=entries.filter(function(e){ return e.customer===custFilter; });
+  return entries;
+}
+
+function showMsg(text, type){
+  var el=document.getElementById('exportMsg');
+  el.textContent=text;
+  el.className='export-msg '+(type||'success');
+  setTimeout(function(){ el.className='export-msg'; },5000);
+}
+
+function exportPDF(){
+  if(typeof window.jspdf === 'undefined'){
+    showMsg('PDF library not loaded. Please check your internet connection.','error');
+    return;
+  }
+  var entries=getExportEntries();
+  if(entries===null) return;
+  if(entries.length===0){ showMsg('No entries found for the selected range.','error'); return; }
+
+  var range=document.getElementById('exportRange').value;
+  var now=new Date();
+  var rangeLabel='';
+  if(range==='today') rangeLabel='Today — '+fmtDateDisp(now);
+  else if(range==='week') rangeLabel='This week';
+  else if(range==='month') rangeLabel=now.toLocaleString('default',{month:'long',year:'numeric'});
+  else if(range==='all') rangeLabel='All entries';
+  else rangeLabel=fmtDateDisp(new Date(document.getElementById('dateFrom').value))+' to '+fmtDateDisp(new Date(document.getElementById('dateTo').value));
+
+  var custFilter=document.getElementById('exportCustomer').value;
+  var custLabel=custFilter?custFilter:'All Customers';
+
+  try {
+    var jsPDF=window.jspdf.jsPDF;
+    var doc=new jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
+
+    // Header
+    doc.setFillColor(60,52,137);
+    doc.rect(0,0,210,32,'F');
+    doc.setFontSize(18); doc.setFont('helvetica','bold');
+    doc.setTextColor(255,255,255);
+    doc.text('Task Time Sheet',14,12);
+    doc.setFontSize(9); doc.setFont('helvetica','normal');
+    doc.text('Period: '+rangeLabel,14,19);
+    doc.text('Customer: '+custLabel,14,25);
+    doc.text('Generated: '+fmtDateDisp(now)+' '+fmtTime(now),14,30);
+
+    var totalMs=entries.reduce(function(a,e){ return a+e.ms; },0);
+    var th=Math.floor(totalMs/3600000), tm=Math.floor(totalMs/60000)%60;
+    doc.text('Total: '+entries.length+' task(s) | '+th+'h '+tm+'m',196,19,{align:'right'});
+
+    doc.setTextColor(40,40,40);
+    var y=40;
+
+    // Group by date
+    var grouped={};
+    var sorted=[].concat(entries).sort(function(a,b){ return a.start-b.start; });
+    sorted.forEach(function(e){
+      if(!grouped[e.dateStr]) grouped[e.dateStr]=[];
+      grouped[e.dateStr].push(e);
+    });
+
+    Object.keys(grouped).forEach(function(date){
+      var dayEntries=grouped[date];
+      var dayMs=dayEntries.reduce(function(a,e){ return a+e.ms; },0);
+      var dh=Math.floor(dayMs/3600000), dm=Math.floor(dayMs/60000)%60;
+
+      // Day header
+      doc.setFillColor(238,237,254);
+      doc.rect(14,y-4,182,8,'F');
+      doc.setFontSize(10); doc.setFont('helvetica','bold');
+      doc.setTextColor(60,52,137);
+      doc.text(date,16,y);
+      doc.text('Daily total: '+dh+'h '+dm+'m',190,y,{align:'right'});
+      doc.setTextColor(40,40,40);
+      y+=3;
+
+      var showCust=!custFilter;
+      var rows=dayEntries.map(function(e){
+        var row=[e.task, e.desc||'', fmtTime(e.start), fmtTime(e.end), durStr(e.ms)];
+        if(showCust) row.splice(1,0,e.customer||'—');
+        return row;
+      });
+      var head=showCust
+        ?[['Task','Customer','Description','Start','End','Duration']]
+        :[['Task','Description','Start','End','Duration']];
+      var colStyles=showCust
+        ?{0:{cellWidth:38,fontStyle:'bold'},1:{cellWidth:28},2:{cellWidth:58},3:{cellWidth:18,halign:'center'},4:{cellWidth:18,halign:'center'},5:{cellWidth:22,halign:'right',fontStyle:'bold',textColor:[60,52,137]}}
+        :{0:{cellWidth:46,fontStyle:'bold'},1:{cellWidth:70},2:{cellWidth:18,halign:'center'},3:{cellWidth:18,halign:'center'},4:{cellWidth:24,halign:'right',fontStyle:'bold',textColor:[60,52,137]}};
+
+      doc.autoTable({
+        head:head, body:rows, startY:y,
+        margin:{left:14,right:14},
+        styles:{fontSize:9, cellPadding:3, textColor:[30,30,30], lineColor:[220,220,220], lineWidth:0.1},
+        headStyles:{fillColor:[60,52,137], textColor:[255,255,255], fontStyle:'bold', fontSize:9},
+        alternateRowStyles:{fillColor:[248,248,252]},
+        columnStyles:colStyles,
+      });
+      y=doc.lastAutoTable.finalY+10;
+      if(y>265){ doc.addPage(); y=14; }
+    });
+
+    // Footer summary
+    if(y>255){ doc.addPage(); y=14; }
+    doc.setFillColor(60,52,137);
+    doc.rect(14,y,182,10,'F');
+    doc.setFontSize(10); doc.setFont('helvetica','bold');
+    doc.setTextColor(255,255,255);
+    doc.text('Grand total: '+th+'h '+tm+'m across '+entries.length+' task(s)',16,y+6.5);
+
+    // Signature block
+    y+=22;
+    if(y>260){ doc.addPage(); y=14; }
+    doc.setTextColor(100,100,100);
+    doc.setFontSize(9); doc.setFont('helvetica','normal');
+    doc.setDrawColor(180,180,180);
+    doc.line(14,y,80,y);
+    doc.line(130,y,196,y);
+    doc.text('Employee Signature',14,y+5);
+    doc.text('Manager Signature',130,y+5);
+    doc.text('Date: _______________',14,y+11);
+    doc.text('Date: _______________',130,y+11);
+
+    var custSuffix=custFilter?'_'+custFilter.replace(/\s+/g,'_'):'';
+    var fname='TaskSheet_'+range+custSuffix+'_'+toDateKey(now)+'.pdf';
+    if(range==='custom'){
+      fname='TaskSheet_'+document.getElementById('dateFrom').value+'_to_'+document.getElementById('dateTo').value+custSuffix+'.pdf';
+    }
+    doc.save(fname);
+    showMsg('PDF downloaded: '+fname,'success');
+  } catch(err){
+    showMsg('PDF error: '+err.message,'error');
+    console.error(err);
+  }
+}
+
+/* ════════════════════════════════
+   AUTH — simple password lock
+   Password stored as SHA-256 hash
+   ════════════════════════════════ */
+var LS_PW = 'tts_pw_hash';
+
+async function sha256(str){
+  var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+}
+
+async function submitLock(){
+  var pw = document.getElementById('lockInput').value;
+  if(!pw){ showLockErr('Please enter a password.'); return; }
+  var stored = localStorage.getItem(LS_PW);
+  if(!stored){
+    /* First run — set the password */
+    if(pw.length < 4){ showLockErr('Password must be at least 4 characters.'); return; }
+    var hash = await sha256(pw);
+    localStorage.setItem(LS_PW, hash);
+    unlock();
+  } else {
+    var hash = await sha256(pw);
+    if(hash === stored){
+      unlock();
+    } else {
+      showLockErr('Incorrect password. Try again.');
+      document.getElementById('lockInput').value='';
+      document.getElementById('lockInput').focus();
+    }
+  }
+}
+
+function unlock(){
+  document.getElementById('lockScreen').classList.remove('show');
+  document.getElementById('lockBadge').style.display='flex';
+  document.getElementById('lockInput').value='';
+  document.getElementById('lockErr').textContent='';
+}
+
+function lockApp(){
+  document.getElementById('lockScreen').classList.add('show');
+  document.getElementById('lockBadge').style.display='none';
+  document.getElementById('lockInput').value='';
+  document.getElementById('lockErr').textContent='';
+  document.getElementById('lockInput').focus();
+  updateLockUI();
+}
+
+function showLockErr(msg){
+  document.getElementById('lockErr').textContent=msg;
+}
+
+async function changePassword(){
+  var curr = prompt('Enter your current password:');
+  if(curr===null) return;
+  var currHash = await sha256(curr);
+  if(currHash !== localStorage.getItem(LS_PW)){
+    alert('Incorrect current password.'); return;
+  }
+  var np = prompt('Enter new password (min 4 characters):');
+  if(!np||np.length<4){ alert('Password too short.'); return; }
+  var np2 = prompt('Confirm new password:');
+  if(np!==np2){ alert('Passwords do not match.'); return; }
+  localStorage.setItem(LS_PW, await sha256(np));
+  alert('Password changed successfully!');
+}
+
+function updateLockUI(){
+  var stored = localStorage.getItem(LS_PW);
+  var sub = document.getElementById('lockSub');
+  var hint = document.getElementById('lockSetupHint');
+  if(!stored){
+    sub.textContent = 'First time setup — choose a password';
+    hint.innerHTML = 'You are setting a new password. Remember it — it cannot be recovered.';
+  } else {
+    sub.textContent = 'Enter your password to continue';
+    hint.innerHTML = '';
+  }
+}
+
+/* ── Init ── */
+updateLockUI();
+document.getElementById('lockInput').focus();
+loadTasks();
+loadCustomers();
+loadLog();
+updateStats();
+renderLog();
+document.getElementById('dateFrom').value=toDateKey(new Date());
+document.getElementById('dateTo').value=toDateKey(new Date());
+</script>
 </body>
 </html>
