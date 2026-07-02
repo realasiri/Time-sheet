@@ -103,7 +103,7 @@
   <div class="lock-box">
     <div class="lock-icon">&#128274;</div>
     <div class="lock-title">Task Time Sheet</div>
-    <div class="lock-sub" id="lockSub">Enter your password to continue</div>
+    <div class="lock-sub" id="lockSub">Connecting to GitHub…</div>
     <input class="lock-input" type="password" id="lockInput" placeholder="Password" onkeydown="if(event.key==='Enter')submitLock()">
     <button class="lock-btn" onclick="submitLock()">Unlock</button>
     <div class="lock-err" id="lockErr"></div>
@@ -335,6 +335,7 @@ async function gistSave(){
   setSyncStatus('⟳ Saving…','#888');
   try {
     var data = {
+      pw_hash:   localStorage.getItem(LS_PW)||'',
       log:       JSON.parse(localStorage.getItem(LS_LOG)||'[]'),
       tasks:     JSON.parse(localStorage.getItem(LS_TASKS)||'[]'),
       customers: JSON.parse(localStorage.getItem(LS_CUSTS)||'[]'),
@@ -997,18 +998,46 @@ async function sha256(str){
 }
 
 async function submitLock(){
-  var pw = document.getElementById('lockInput').value;
+  var pw = document.getElementById('lockInput').value.trim();
   if(!pw){ showLockErr('Please enter a password.'); return; }
-  var stored = localStorage.getItem(LS_PW);
+
+  showLockErr('');
+  document.getElementById('lockSub').textContent = 'Checking…';
+
+  /* Try to get the stored hash — first from Gist, fallback to localStorage */
+  var stored = null;
+  try {
+    var res = await fetch(GIST_API, {
+      headers:{ 'Authorization':'token '+GIST_TOKEN, 'Accept':'application/vnd.github.v3+json' }
+    });
+    if(res.ok){
+      var gist = await res.json();
+      var content = gist.files[GIST_FILE] && gist.files[GIST_FILE].content;
+      if(content && content.trim()!=='{}' && content.trim()!==''){
+        var data = JSON.parse(content);
+        if(data.pw_hash) stored = data.pw_hash;
+      }
+    }
+  } catch(e){ /* offline — fall back to localStorage */ }
+
+  /* fallback to localStorage if gist had no hash */
+  if(!stored) stored = localStorage.getItem(LS_PW);
+
+  updateLockUI();
+
   if(!stored){
-    /* First run — set the password */
+    /* First time setup — set a new password */
     if(pw.length < 4){ showLockErr('Password must be at least 4 characters.'); return; }
     var hash = await sha256(pw);
     localStorage.setItem(LS_PW, hash);
+    /* save hash to gist immediately */
+    await saveHashToGist(hash);
     unlock();
   } else {
     var hash = await sha256(pw);
     if(hash === stored){
+      /* also cache locally for offline use */
+      localStorage.setItem(LS_PW, stored);
       unlock();
     } else {
       showLockErr('Incorrect password. Try again.');
@@ -1016,6 +1045,33 @@ async function submitLock(){
       document.getElementById('lockInput').focus();
     }
   }
+}
+
+async function saveHashToGist(hash){
+  try {
+    /* read current gist content first so we don't overwrite data */
+    var res = await fetch(GIST_API, {
+      headers:{ 'Authorization':'token '+GIST_TOKEN, 'Accept':'application/vnd.github.v3+json' }
+    });
+    var existing = {};
+    if(res.ok){
+      var gist = await res.json();
+      var content = gist.files[GIST_FILE] && gist.files[GIST_FILE].content;
+      if(content && content.trim()!=='{}') try { existing = JSON.parse(content); } catch(e){}
+    }
+    existing.pw_hash = hash;
+    var body = { files:{} };
+    body.files[GIST_FILE] = { content: JSON.stringify(existing,null,2) };
+    await fetch(GIST_API, {
+      method:'PATCH',
+      headers:{
+        'Authorization':'token '+GIST_TOKEN,
+        'Accept':'application/vnd.github.v3+json',
+        'Content-Type':'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+  } catch(e){ console.warn('Could not save hash to gist',e); }
 }
 
 function unlock(){
@@ -1059,8 +1115,8 @@ function updateLockUI(){
   var sub = document.getElementById('lockSub');
   var hint = document.getElementById('lockSetupHint');
   if(!stored){
-    sub.textContent = 'First time setup — choose a password';
-    hint.innerHTML = 'You are setting a new password. Remember it — it cannot be recovered.';
+    sub.textContent = 'First time on this device — enter your password';
+    hint.innerHTML = 'If this is your first time ever, choose a new password (min 4 chars).<br>If you already set one on another device, enter it now.';
   } else {
     sub.textContent = 'Enter your password to continue';
     hint.innerHTML = '';
