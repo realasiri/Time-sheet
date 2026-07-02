@@ -113,6 +113,7 @@
 
 <!-- Lock badge (top-right when unlocked) -->
 <div class="lock-badge" id="lockBadge" style="display:none">
+  <span id="syncStatus" style="font-size:12px;color:#888"></span>
   <button onclick="lockApp()">&#128274; Lock</button>
   <button onclick="changePassword()">&#9881; Change password</button>
 </div>
@@ -253,10 +254,17 @@
 </div>
 
 <script>
-/* ── Storage keys ── */
+/* ── Storage keys (localStorage fallback) ── */
 var LS_LOG   = 'tts_log';
 var LS_TASKS = 'tts_tasks';
 var LS_CUSTS = 'tts_customers';
+var LS_PW    = 'tts_pw_hash';
+
+/* ── GitHub Gist config ── */
+var GIST_ID    = '3007c3b93a69298cc4e3a8e14c83fdfb';
+var GIST_FILE  = 'timesheet-data.json';
+var GIST_TOKEN = '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';
+var GIST_API   = 'https://api.github.com/gists/' + GIST_ID;
 
 /* ── Default built-in tasks ── */
 var DEFAULT_TASKS = [
@@ -290,9 +298,86 @@ function durHHMMSS(ms){
   return pad(h)+':'+pad(m)+':'+pad(s);
 }
 
+/* ── Gist sync ── */
+var gistSyncing = false;
+
+function setSyncStatus(msg, color){
+  var el = document.getElementById('syncStatus');
+  if(el){ el.textContent = msg; el.style.color = color||'#888'; }
+}
+
+async function gistLoad(){
+  setSyncStatus('⟳ Loading data…','#888');
+  try {
+    var res = await fetch(GIST_API, {
+      headers:{ 'Authorization':'token '+GIST_TOKEN, 'Accept':'application/vnd.github.v3+json' }
+    });
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    var gist = await res.json();
+    var content = gist.files[GIST_FILE] && gist.files[GIST_FILE].content;
+    if(!content || content.trim()==='{}' || content.trim()===''){
+      setSyncStatus('✓ Connected — no data yet','#1a7a4a');
+      return null;
+    }
+    var data = JSON.parse(content);
+    setSyncStatus('✓ Synced from GitHub','#1a7a4a');
+    return data;
+  } catch(err){
+    setSyncStatus('⚠ Offline — using local data','#b45309');
+    console.warn('Gist load failed:',err);
+    return null;
+  }
+}
+
+async function gistSave(){
+  if(gistSyncing) return;
+  gistSyncing = true;
+  setSyncStatus('⟳ Saving…','#888');
+  try {
+    var data = {
+      log:       JSON.parse(localStorage.getItem(LS_LOG)||'[]'),
+      tasks:     JSON.parse(localStorage.getItem(LS_TASKS)||'[]'),
+      customers: JSON.parse(localStorage.getItem(LS_CUSTS)||'[]'),
+      updated:   new Date().toISOString()
+    };
+    var body = { files:{} };
+    body.files[GIST_FILE] = { content: JSON.stringify(data,null,2) };
+    var res = await fetch(GIST_API, {
+      method:'PATCH',
+      headers:{
+        'Authorization':'token '+GIST_TOKEN,
+        'Accept':'application/vnd.github.v3+json',
+        'Content-Type':'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    setSyncStatus('✓ Saved — '+new Date().toLocaleTimeString(),'#1a7a4a');
+  } catch(err){
+    setSyncStatus('⚠ Save failed — data kept locally','#c0392b');
+    console.warn('Gist save failed:',err);
+  }
+  gistSyncing = false;
+}
+
+async function initGist(){
+  var data = await gistLoad();
+  if(data){
+    if(data.log)       localStorage.setItem(LS_LOG,   JSON.stringify(data.log));
+    if(data.tasks)     localStorage.setItem(LS_TASKS, JSON.stringify(data.tasks));
+    if(data.customers) localStorage.setItem(LS_CUSTS, JSON.stringify(data.customers));
+  }
+  loadTasks();
+  loadCustomers();
+  loadLog();
+  updateStats();
+  renderLog();
+}
+
 /* ── localStorage save / load ── */
 function saveTasks(){
   localStorage.setItem(LS_TASKS, JSON.stringify(taskList));
+  gistSave();
 }
 
 function saveLog(){
@@ -304,6 +389,7 @@ function saveLog(){
     };
   });
   localStorage.setItem(LS_LOG, JSON.stringify(raw));
+  gistSave();
 }
 
 function loadTasks(){
@@ -328,6 +414,8 @@ function loadLog(){
 
 function saveCustomers(){
   localStorage.setItem(LS_CUSTS, JSON.stringify(custList));
+  gistSave();
+}
 }
 
 function loadCustomers(){
@@ -935,6 +1023,7 @@ function unlock(){
   document.getElementById('lockBadge').style.display='flex';
   document.getElementById('lockInput').value='';
   document.getElementById('lockErr').textContent='';
+  initGist();
 }
 
 function lockApp(){
@@ -981,11 +1070,6 @@ function updateLockUI(){
 /* ── Init ── */
 updateLockUI();
 document.getElementById('lockInput').focus();
-loadTasks();
-loadCustomers();
-loadLog();
-updateStats();
-renderLog();
 document.getElementById('dateFrom').value=toDateKey(new Date());
 document.getElementById('dateTo').value=toDateKey(new Date());
 </script>
