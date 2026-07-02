@@ -114,7 +114,7 @@
     <button class="lock-btn" onclick="submitLock()">Unlock</button>
     <div class="lock-err" id="lockErr"></div>
     <div class="lock-setup" id="lockSetupHint"></div>
-    <div style="margin-top:14px;font-size:11px"><a onclick="toggleTokenBox()" style="cursor:pointer;color:#aaa;text-decoration:underline">&#9881; Configure GitHub token</a></div>
+    <div style="margin-top:14px;font-size:11px"><button onclick="toggleTokenBox()" style="background:none;border:none;cursor:pointer;color:#aaa;text-decoration:underline;font-size:11px;font-family:inherit;padding:0">&#9881; Configure GitHub token</button></div>
   </div>
 </div>
 
@@ -1153,6 +1153,9 @@ function updateLockUI(){
   var stored = localStorage.getItem(LS_PW);
   var sub = document.getElementById('lockSub');
   var hint = document.getElementById('lockSetupHint');
+  /* auto-show token box if no token configured */
+  var hasToken = !!localStorage.getItem('tts_gist_token');
+  document.getElementById('tokenSetupBox').style.display = hasToken ? 'none' : 'block';
   if(!stored){
     sub.textContent = 'First time on this device — enter your password';
     hint.innerHTML = 'If this is your first time ever, choose a new password (min 4 chars).<br>If you already set one on another device, enter it now.';
