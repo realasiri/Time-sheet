@@ -221,6 +221,20 @@
     <div id="exportMsg" class="export-msg"></div>
   </div>
 
+  <!-- Data Backup / Restore -->
+  <div class="export-card" style="background:#f0fdf4;border-color:#86efac">
+    <h3 style="color:#166534">&#128190; Data Backup &amp; Restore</h3>
+    <p style="font-size:12px;color:#166534;margin-bottom:12px">Export all your tasks and log entries as a JSON file. Use this to migrate data to GitHub Pages or back up your records.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <button class="btn" onclick="exportDataJSON()" style="background:#dcfce7;border-color:#86efac;color:#166534;font-weight:600">&#11015; Export all data (.json)</button>
+      <label class="btn" style="cursor:pointer;background:#fff;border-color:#86efac;color:#166534">
+        &#11014; Import data (.json)
+        <input type="file" id="importFile" accept=".json" onchange="importDataJSON(event)" style="display:none">
+      </label>
+      <span id="backupMsg" style="font-size:12px;color:#166534"></span>
+    </div>
+  </div>
+
   <!-- Log -->
   <div class="log-header">
     <span class="log-title">Task log</span>
@@ -822,6 +836,65 @@ function exportPDF(){
     showMsg('PDF error: '+err.message,'error');
     console.error(err);
   }
+}
+
+/* ── Data backup / restore ── */
+function exportDataJSON(){
+  try {
+    var data={
+      log: JSON.parse(localStorage.getItem(LS_LOG)||'[]'),
+      tasks: JSON.parse(localStorage.getItem(LS_TASKS)||'[]'),
+      customers: JSON.parse(localStorage.getItem(LS_CUSTS)||'[]'),
+      exported: new Date().toISOString()
+    };
+    var json=JSON.stringify(data,null,2);
+    var blob=new Blob([json],{type:'application/json'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=url;
+    a.download='timesheet-data-'+toDateKey(new Date())+'.json';
+    a.style.display='none';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function(){
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    },300);
+    var msg=document.getElementById('backupMsg');
+    msg.textContent='✓ Exported — '+data.log.length+' entries saved.';
+    msg.style.color='#166534';
+    setTimeout(function(){ msg.textContent=''; },4000);
+  } catch(err){
+    alert('Export failed: '+err.message);
+  }
+}
+
+function importDataJSON(event){
+  var file=event.target.files[0];
+  if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try {
+      var data=JSON.parse(e.target.result);
+      if(!data.log||!data.tasks){ alert('Invalid backup file.'); return; }
+      if(!confirm('This will replace ALL current data with the imported data. Continue?')) return;
+      localStorage.setItem(LS_LOG, JSON.stringify(data.log));
+      localStorage.setItem(LS_TASKS, JSON.stringify(data.tasks));
+      if(data.customers) localStorage.setItem(LS_CUSTS, JSON.stringify(data.customers));
+      /* reload everything */
+      loadTasks();
+      loadCustomers();
+      loadLog();
+      updateStats();
+      renderLog();
+      document.getElementById('backupMsg').textContent='✓ Imported '+data.log.length+' entries successfully.';
+      setTimeout(function(){ document.getElementById('backupMsg').textContent=''; },4000);
+    } catch(err){
+      alert('Failed to import: '+err.message);
+    }
+    event.target.value='';
+  };
+  reader.readAsText(file);
 }
 
 /* ════════════════════════════════
