@@ -103,18 +103,22 @@
   <div class="lock-box">
     <div class="lock-icon">&#128274;</div>
     <div class="lock-title">Task Time Sheet</div>
-    <div class="lock-sub" id="lockSub">Enter your password to continue</div>
-    <div id="tokenSetupBox" style="display:none;margin-bottom:14px;text-align:left">
-      <label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:5px">GitHub Personal Access Token</label>
-      <input class="lock-input" type="password" id="tokenInput" placeholder="ghp_..." style="letter-spacing:1px;margin-bottom:6px">
-      <div style="font-size:11px;color:#aaa;line-height:1.6">GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic) → select only <b>gist</b> scope.</div>
-      <button onclick="saveToken()" class="lock-btn" style="margin-top:8px;padding:8px">Save token</button>
+    <div class="lock-sub" id="lockSub">Enter your details to continue</div>
+
+    <div style="text-align:left;margin-bottom:12px">
+      <div style="font-size:12px;font-weight:600;color:#555;margin-bottom:5px">GitHub Token <span id="tokenStatus" style="font-weight:400;color:#1a7a4a"></span></div>
+      <input class="lock-input" type="password" id="tokenInput" placeholder="ghp_... (paste your token here)" style="letter-spacing:1px">
+      <div style="font-size:11px;color:#aaa;margin-top:4px;line-height:1.5">Only needed once per device. GitHub → Settings → Developer settings → Personal access tokens (classic) → gist scope only.</div>
     </div>
-    <input class="lock-input" type="password" id="lockInput" placeholder="Password" onkeydown="if(event.key==='Enter')submitLock()">
-    <button class="lock-btn" onclick="submitLock()">Unlock</button>
+
+    <div style="text-align:left;margin-bottom:4px">
+      <div style="font-size:12px;font-weight:600;color:#555;margin-bottom:5px">Password</div>
+      <input class="lock-input" type="password" id="lockInput" placeholder="Enter password" onkeydown="if(event.key==='Enter')submitLock()">
+    </div>
+
+    <button class="lock-btn" onclick="submitLock()" style="margin-top:12px">Unlock</button>
     <div class="lock-err" id="lockErr"></div>
     <div class="lock-setup" id="lockSetupHint"></div>
-    <div style="margin-top:14px;font-size:11px"><button onclick="toggleTokenBox()" style="background:none;border:none;cursor:pointer;color:#aaa;text-decoration:underline;font-size:11px;font-family:inherit;padding:0">&#9881; Configure GitHub token</button></div>
   </div>
 </div>
 
@@ -1004,62 +1008,58 @@ async function sha256(str){
   return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
 }
 
-function toggleTokenBox(){
-  var box = document.getElementById('tokenSetupBox');
-  box.style.display = box.style.display==='none' ? 'block' : 'none';
-}
-
-function saveToken(){
-  var t = document.getElementById('tokenInput').value.trim();
-  if(!t||!t.startsWith('ghp_')){ showLockErr('Invalid token — must start with ghp_'); return; }
-  localStorage.setItem('tts_gist_token', t);
-  GIST_TOKEN = t;
-  document.getElementById('tokenSetupBox').style.display='none';
-  document.getElementById('tokenInput').value='';
-  showLockErr('');
-  document.getElementById('lockSub').textContent='Token saved! Now enter your password.';
-}
+function toggleTokenBox(){ /* no longer needed */ }
+function saveToken(){ /* no longer needed */ }
 
 async function submitLock(){
   var pw = document.getElementById('lockInput').value.trim();
-  if(!pw){ showLockErr('Please enter a password.'); return; }
+  if(!pw){ showLockErr('Please enter your password.'); return; }
 
-  /* check token is configured */
-  GIST_TOKEN = localStorage.getItem('tts_gist_token')||GIST_TOKEN;
+  /* read token from input or localStorage */
+  var tokenInput = document.getElementById('tokenInput').value.trim();
+  if(tokenInput && tokenInput.startsWith('ghp_')){
+    localStorage.setItem('tts_gist_token', tokenInput);
+    GIST_TOKEN = tokenInput;
+  } else {
+    GIST_TOKEN = localStorage.getItem('tts_gist_token')||'';
+  }
+
+  /* update token status label */
+  var ts = document.getElementById('tokenStatus');
+  if(GIST_TOKEN){ ts.textContent='✓ configured'; document.getElementById('tokenInput').value=''; }
+  else { ts.textContent=''; }
+
   if(!GIST_TOKEN){
-    showLockErr('Please configure your GitHub token first (⚙ link below).');
-    document.getElementById('tokenSetupBox').style.display='block';
+    showLockErr('Please paste your GitHub token above first.');
+    document.getElementById('tokenInput').focus();
     return;
   }
 
   showLockErr('');
   document.getElementById('lockSub').textContent='Connecting to GitHub…';
 
-  /* Try to get the stored hash from Gist, fallback to localStorage */
+  /* fetch password hash from Gist */
   var stored = null;
   try {
     var res = await fetch(GIST_API, {
       headers:{ 'Authorization':'token '+GIST_TOKEN, 'Accept':'application/vnd.github.v3+json' }
     });
     if(!res.ok){
-      var errText = 'GitHub error '+res.status;
-      if(res.status===401) errText='Token invalid or expired — please reconfigure (⚙ below)';
-      if(res.status===404) errText='Gist not found — check your Gist ID';
-      showLockErr(errText);
+      var msg = 'GitHub error '+res.status;
+      if(res.status===401) msg='Token invalid or expired — generate a new one and paste above.';
+      if(res.status===404) msg='Gist not found — check Gist ID in the file.';
+      showLockErr(msg);
       document.getElementById('lockSub').textContent='Connection failed';
-      if(res.status===401) document.getElementById('tokenSetupBox').style.display='block';
-      /* still allow login with local hash if available */
       stored = localStorage.getItem(LS_PW);
     } else {
       var gist = await res.json();
       var content = gist.files[GIST_FILE] && gist.files[GIST_FILE].content;
       if(content && content.trim()!=='{}' && content.trim()!==''){
-        var data = JSON.parse(content);
-        if(data.pw_hash) stored = data.pw_hash;
+        try { var data=JSON.parse(content); if(data.pw_hash) stored=data.pw_hash; } catch(e){}
       }
     }
   } catch(e){
-    showLockErr('Cannot reach GitHub — working offline.');
+    showLockErr('Cannot reach GitHub — trying offline mode.');
     stored = localStorage.getItem(LS_PW);
   }
 
@@ -1068,14 +1068,15 @@ async function submitLock(){
   updateLockUI();
 
   if(!stored){
-    if(pw.length < 4){ showLockErr('Password must be at least 4 characters.'); return; }
+    /* first time — set password */
+    if(pw.length<4){ showLockErr('Password must be at least 4 characters.'); return; }
     var hash = await sha256(pw);
     localStorage.setItem(LS_PW, hash);
     await saveHashToGist(hash);
     unlock();
   } else {
     var hash = await sha256(pw);
-    if(hash === stored){
+    if(hash===stored){
       localStorage.setItem(LS_PW, stored);
       unlock();
     } else {
@@ -1153,14 +1154,14 @@ function updateLockUI(){
   var stored = localStorage.getItem(LS_PW);
   var sub = document.getElementById('lockSub');
   var hint = document.getElementById('lockSetupHint');
-  /* auto-show token box if no token configured */
   var hasToken = !!localStorage.getItem('tts_gist_token');
-  document.getElementById('tokenSetupBox').style.display = hasToken ? 'none' : 'block';
+  var ts = document.getElementById('tokenStatus');
+  if(ts) ts.textContent = hasToken ? '✓ configured' : '';
   if(!stored){
-    sub.textContent = 'First time on this device — enter your password';
-    hint.innerHTML = 'If this is your first time ever, choose a new password (min 4 chars).<br>If you already set one on another device, enter it now.';
+    sub.textContent = 'First time — set a password (min 4 chars)';
+    hint.innerHTML = 'If you already set one on another device, enter it here.';
   } else {
-    sub.textContent = 'Enter your password to continue';
+    sub.textContent = 'Enter your details to continue';
     hint.innerHTML = '';
   }
 }
