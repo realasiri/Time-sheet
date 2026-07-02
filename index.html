@@ -103,11 +103,18 @@
   <div class="lock-box">
     <div class="lock-icon">&#128274;</div>
     <div class="lock-title">Task Time Sheet</div>
-    <div class="lock-sub" id="lockSub">Connecting to GitHub…</div>
+    <div class="lock-sub" id="lockSub">Enter your password to continue</div>
+    <div id="tokenSetupBox" style="display:none;margin-bottom:14px;text-align:left">
+      <label style="font-size:12px;font-weight:600;color:#555;display:block;margin-bottom:5px">GitHub Personal Access Token</label>
+      <input class="lock-input" type="password" id="tokenInput" placeholder="ghp_..." style="letter-spacing:1px;margin-bottom:6px">
+      <div style="font-size:11px;color:#aaa;line-height:1.6">GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic) → select only <b>gist</b> scope.</div>
+      <button onclick="saveToken()" class="lock-btn" style="margin-top:8px;padding:8px">Save token</button>
+    </div>
     <input class="lock-input" type="password" id="lockInput" placeholder="Password" onkeydown="if(event.key==='Enter')submitLock()">
     <button class="lock-btn" onclick="submitLock()">Unlock</button>
     <div class="lock-err" id="lockErr"></div>
     <div class="lock-setup" id="lockSetupHint"></div>
+    <div style="margin-top:14px;font-size:11px"><a onclick="toggleTokenBox()" style="cursor:pointer;color:#aaa;text-decoration:underline">&#9881; Configure GitHub token</a></div>
   </div>
 </div>
 
@@ -263,7 +270,7 @@ var LS_PW    = 'tts_pw_hash';
 /* ── GitHub Gist config ── */
 var GIST_ID    = '3007c3b93a69298cc4e3a8e14c83fdfb';
 var GIST_FILE  = 'timesheet-data.json';
-var GIST_TOKEN = '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';
+var GIST_TOKEN = localStorage.getItem('tts_gist_token')||'';
 var GIST_API   = 'https://api.github.com/gists/' + GIST_ID;
 
 /* ── Default built-in tasks ── */
@@ -997,20 +1004,53 @@ async function sha256(str){
   return Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
 }
 
+function toggleTokenBox(){
+  var box = document.getElementById('tokenSetupBox');
+  box.style.display = box.style.display==='none' ? 'block' : 'none';
+}
+
+function saveToken(){
+  var t = document.getElementById('tokenInput').value.trim();
+  if(!t||!t.startsWith('ghp_')){ showLockErr('Invalid token — must start with ghp_'); return; }
+  localStorage.setItem('tts_gist_token', t);
+  GIST_TOKEN = t;
+  document.getElementById('tokenSetupBox').style.display='none';
+  document.getElementById('tokenInput').value='';
+  showLockErr('');
+  document.getElementById('lockSub').textContent='Token saved! Now enter your password.';
+}
+
 async function submitLock(){
   var pw = document.getElementById('lockInput').value.trim();
   if(!pw){ showLockErr('Please enter a password.'); return; }
 
-  showLockErr('');
-  document.getElementById('lockSub').textContent = 'Checking…';
+  /* check token is configured */
+  GIST_TOKEN = localStorage.getItem('tts_gist_token')||GIST_TOKEN;
+  if(!GIST_TOKEN){
+    showLockErr('Please configure your GitHub token first (⚙ link below).');
+    document.getElementById('tokenSetupBox').style.display='block';
+    return;
+  }
 
-  /* Try to get the stored hash — first from Gist, fallback to localStorage */
+  showLockErr('');
+  document.getElementById('lockSub').textContent='Connecting to GitHub…';
+
+  /* Try to get the stored hash from Gist, fallback to localStorage */
   var stored = null;
   try {
     var res = await fetch(GIST_API, {
       headers:{ 'Authorization':'token '+GIST_TOKEN, 'Accept':'application/vnd.github.v3+json' }
     });
-    if(res.ok){
+    if(!res.ok){
+      var errText = 'GitHub error '+res.status;
+      if(res.status===401) errText='Token invalid or expired — please reconfigure (⚙ below)';
+      if(res.status===404) errText='Gist not found — check your Gist ID';
+      showLockErr(errText);
+      document.getElementById('lockSub').textContent='Connection failed';
+      if(res.status===401) document.getElementById('tokenSetupBox').style.display='block';
+      /* still allow login with local hash if available */
+      stored = localStorage.getItem(LS_PW);
+    } else {
       var gist = await res.json();
       var content = gist.files[GIST_FILE] && gist.files[GIST_FILE].content;
       if(content && content.trim()!=='{}' && content.trim()!==''){
@@ -1018,25 +1058,24 @@ async function submitLock(){
         if(data.pw_hash) stored = data.pw_hash;
       }
     }
-  } catch(e){ /* offline — fall back to localStorage */ }
+  } catch(e){
+    showLockErr('Cannot reach GitHub — working offline.');
+    stored = localStorage.getItem(LS_PW);
+  }
 
-  /* fallback to localStorage if gist had no hash */
   if(!stored) stored = localStorage.getItem(LS_PW);
 
   updateLockUI();
 
   if(!stored){
-    /* First time setup — set a new password */
     if(pw.length < 4){ showLockErr('Password must be at least 4 characters.'); return; }
     var hash = await sha256(pw);
     localStorage.setItem(LS_PW, hash);
-    /* save hash to gist immediately */
     await saveHashToGist(hash);
     unlock();
   } else {
     var hash = await sha256(pw);
     if(hash === stored){
-      /* also cache locally for offline use */
       localStorage.setItem(LS_PW, stored);
       unlock();
     } else {
